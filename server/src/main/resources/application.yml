@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: forge-backend
+  datasource:
+    url: ${FORGE_DATASOURCE_URL:jdbc:postgresql://localhost:5432/forge}
+    username: ${FORGE_DATASOURCE_USERNAME:forge}
+    password: ${FORGE_DATASOURCE_PASSWORD:forge}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+
+server:
+  port: ${FORGE_SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: when_authorized
+
+forge:
+  jwt:
+    issuer: ${FORGE_JWT_ISSUER:https://forge.local}
+    audience: ${FORGE_JWT_AUDIENCE:forge-clients}
+    access-token-ttl-seconds: ${FORGE_JWT_ACCESS_TTL_SECONDS:3600}
+    private-key-pem-path: ${FORGE_JWT_PRIVATE_KEY_PEM:classpath:keys/dev-private.pem}
+    public-key-pem-path: ${FORGE_JWT_PUBLIC_KEY_PEM:classpath:keys/dev-public.pem}
+  steam:
+    request-timeout-seconds: ${FORGE_STEAM_TIMEOUT_SECONDS:10}
+    base-url: ${FORGE_STEAM_BASE_URL:https://api.steampowered.com}

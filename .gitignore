@@ -1,0 +1,17 @@
+# Gradle
+server/build/
+server/.gradle/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation: only README.md is tracked on the remote (per project policy)
+*.md
+!README.md
