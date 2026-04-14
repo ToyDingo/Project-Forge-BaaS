@@ -50,13 +50,18 @@ Environment variables (optional overrides):
 
 | Variable | Purpose |
 |----------|---------|
-| `FORGE_DATASOURCE_URL` | JDBC URL (default `jdbc:postgresql://localhost:5432/forge`) |
+| `FORGE_DATASOURCE_URL` | JDBC URL (default `jdbc:postgresql://localhost:5432/app`) |
 | `FORGE_DATASOURCE_USERNAME` | DB user |
 | `FORGE_DATASOURCE_PASSWORD` | DB password |
 | `FORGE_JWT_ISSUER` | JWT `iss` claim |
 | `FORGE_JWT_AUDIENCE` | JWT `aud` claim |
 | `FORGE_JWT_PRIVATE_KEY_PEM` | Path or `classpath:` to PEM **private** key |
 | `FORGE_JWT_PUBLIC_KEY_PEM` | Path or `classpath:` to PEM **public** key |
+| `FORGE_STEAM_DEV_STUB_ENABLED` | Set to `true` **for local testing only** — skips real Steam HTTP calls and uses `DevOnlySteamClientStub` (see class Javadoc). **Do not enable in production.** |
+
+### DEV ONLY: Steam stub (Postman / local)
+
+Set `FORGE_STEAM_DEV_STUB_ENABLED=true` (or `forge.steam.dev-stub-enabled=true` in YAML) so the app uses `DevOnlySteamClientStub` instead of `SteamWebApiClient`. The stub returns a **successful** `SteamTicketValidationResult` when `steam_ticket` is a **hex string** of at least **16** characters; otherwise it returns an invalid ticket. A fixed SteamID64 is used on success. **Remove reliance on this before shipping real Steam validation.** Logs emit a warning on startup when the stub is active.
 
 Dev defaults point at `classpath:keys/dev-private.pem` and `classpath:keys/dev-public.pem`. Regenerate locally if needed:
 

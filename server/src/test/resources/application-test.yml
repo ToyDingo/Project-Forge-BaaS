@@ -21,3 +21,7 @@ forge:
     access-token-ttl-seconds: 3600
     private-key-pem-path: classpath:keys/test-private.pem
     public-key-pem-path: classpath:keys/test-public.pem
+  steam:
+    request-timeout-seconds: 10
+    base-url: https://api.steampowered.com
+    dev-stub-enabled: false

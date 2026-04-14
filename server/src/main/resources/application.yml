@@ -2,9 +2,9 @@ spring:
   application:
     name: forge-backend
   datasource:
-    url: ${FORGE_DATASOURCE_URL:jdbc:postgresql://localhost:5432/forge}
-    username: ${FORGE_DATASOURCE_USERNAME:forge}
-    password: ${FORGE_DATASOURCE_PASSWORD:forge}
+    url: ${FORGE_DATASOURCE_URL:jdbc:postgresql://localhost:5432/app}
+    username: ${FORGE_DATASOURCE_USERNAME:app}
+    password: ${FORGE_DATASOURCE_PASSWORD:app}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -28,6 +28,8 @@ management:
     health:
       show-details: when_authorized
 
+# Set forge.steam.dev-stub-enabled=true (or FORGE_STEAM_DEV_STUB_ENABLED=true) for local Postman/tests without calling Valve.
+# DEV ONLY — remove reliance on the stub once real Steam validation is fully wired and tested.
 forge:
   jwt:
     issuer: ${FORGE_JWT_ISSUER:https://forge.local}
@@ -38,3 +40,4 @@ forge:
   steam:
     request-timeout-seconds: ${FORGE_STEAM_TIMEOUT_SECONDS:10}
     base-url: ${FORGE_STEAM_BASE_URL:https://api.steampowered.com}
+    dev-stub-enabled: ${FORGE_STEAM_DEV_STUB_ENABLED:true}

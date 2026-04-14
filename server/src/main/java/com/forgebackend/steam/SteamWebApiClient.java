@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forgebackend.config.ForgeSteamProperties;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
@@ -12,8 +13,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Production implementation of {@link SteamClient} using the Steam Web HTTP API.
+ * <p>
+ * Not loaded when {@code forge.steam.dev-stub-enabled=true} (see {@link DevOnlySteamClientStub}).
  */
 @Component
+@ConditionalOnProperty(prefix = "forge.steam", name = "dev-stub-enabled", havingValue = "false", matchIfMissing = true)
 public class SteamWebApiClient implements SteamClient {
 
     private static final String AUTH_TICKET_PATH = "/ISteamUserAuth/AuthenticateUserTicket/v1/";

@@ -1,5 +1,6 @@
 package com.forgebackend.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -20,9 +21,10 @@ public class ForgeBackendConfiguration {
     }
 
     /**
-     * HTTP client for Steam Web API calls with configurable timeouts.
+     * HTTP client for Steam Web API calls with configurable timeouts (unused when the dev Steam stub is enabled).
      */
     @Bean
+    @ConditionalOnProperty(prefix = "forge.steam", name = "dev-stub-enabled", havingValue = "false", matchIfMissing = true)
     public RestTemplate steamRestTemplate(RestTemplateBuilder builder, ForgeSteamProperties steamProperties) {
         Duration timeout = Duration.ofSeconds(steamProperties.requestTimeoutSeconds());
         return builder
