@@ -9,10 +9,21 @@ class DevOnlySteamClientStubTest {
     private final DevOnlySteamClientStub stub = new DevOnlySteamClientStub();
 
     @Test
-    void validHexTicket_returnsSuccessWithFixedSteamId() {
-        SteamTicketValidationResult result = stub.validateTicket(480L, "any-key", "abcdef0123456789");
-        assertThat(result).isInstanceOf(SteamTicketValidationResult.ValidSteamIdentity.class);
-        assertThat(((SteamTicketValidationResult.ValidSteamIdentity) result).steamId64()).isEqualTo(DevOnlySteamClientStub.STUB_STEAM_ID_64);
+    void validHexTicket_returnsDeterministicSteamIdPerTicket() {
+        SteamTicketValidationResult first = stub.validateTicket(480L, "any-key", "abcdef0123456789");
+        SteamTicketValidationResult second = stub.validateTicket(480L, "any-key", "abcdef0123456789");
+        SteamTicketValidationResult other = stub.validateTicket(480L, "any-key", "1234567890abcdef");
+
+        assertThat(first).isInstanceOf(SteamTicketValidationResult.ValidSteamIdentity.class);
+        assertThat(second).isInstanceOf(SteamTicketValidationResult.ValidSteamIdentity.class);
+        assertThat(other).isInstanceOf(SteamTicketValidationResult.ValidSteamIdentity.class);
+
+        String firstId = ((SteamTicketValidationResult.ValidSteamIdentity) first).steamId64();
+        String secondId = ((SteamTicketValidationResult.ValidSteamIdentity) second).steamId64();
+        String otherId = ((SteamTicketValidationResult.ValidSteamIdentity) other).steamId64();
+
+        assertThat(firstId).isEqualTo(secondId);
+        assertThat(firstId).isNotEqualTo(otherId);
     }
 
     @Test

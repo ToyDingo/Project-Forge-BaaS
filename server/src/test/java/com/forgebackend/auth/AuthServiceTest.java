@@ -1,15 +1,16 @@
 package com.forgebackend.auth;
 
-import com.forgebackend.auth.dto.SteamAuthRequest;
 import com.forgebackend.config.ForgeJwtProperties;
-import com.forgebackend.domain.game.Game;
-import com.forgebackend.domain.game.GameRepository;
-import com.forgebackend.domain.player.Player;
-import com.forgebackend.domain.player.PlayerRepository;
+import com.forgebackend.dto.SteamAuthRequest;
+import com.forgebackend.entity.Game;
+import com.forgebackend.entity.Player;
 import com.forgebackend.exception.ForgeApiException;
 import com.forgebackend.exception.ForgeErrorCode;
+import com.forgebackend.repository.GameRepository;
+import com.forgebackend.repository.PlayerRepository;
 import com.forgebackend.security.ForgeGameAuthenticationToken;
-import com.forgebackend.security.ForgeJwtService;
+import com.forgebackend.service.AuthService;
+import com.forgebackend.service.ForgeJwtService;
 import com.forgebackend.steam.SteamClient;
 import com.forgebackend.steam.SteamTicketValidationResult;
 import org.junit.jupiter.api.BeforeEach;

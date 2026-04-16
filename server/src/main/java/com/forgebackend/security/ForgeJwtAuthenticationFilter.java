@@ -1,8 +1,9 @@
 package com.forgebackend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.forgebackend.api.ErrorResponse;
+import com.forgebackend.dto.ErrorResponse;
 import com.forgebackend.exception.ForgeErrorCode;
+import com.forgebackend.service.ForgeJwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,7 +67,12 @@ public class ForgeJwtAuthenticationFilter extends OncePerRequestFilter {
         if ("GET".equalsIgnoreCase(method) && ("/health".equals(path) || "/actuator/health".equals(path))) {
             return true;
         }
-        return "POST".equalsIgnoreCase(method) && "/v1/auth/steam".equals(path);
+        if ("POST".equalsIgnoreCase(method) && "/v1/auth/steam".equals(path)) {
+            return true;
+        }
+        // WebSocket handshake: authentication is enforced on the STOMP CONNECT frame via
+        // the JWT channel interceptor in WebSocketConfig, not at the HTTP upgrade request.
+        return path != null && (path.equals("/ws") || path.startsWith("/ws/"));
     }
 
     private void writeError(HttpServletResponse response, ForgeErrorCode code, String message) throws IOException {

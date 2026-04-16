@@ -1,8 +1,8 @@
 package com.forgebackend.auth;
 
-import com.forgebackend.domain.game.Game;
-import com.forgebackend.domain.game.GameRepository;
-import com.forgebackend.domain.player.PlayerRepository;
+import com.forgebackend.entity.Game;
+import com.forgebackend.repository.GameRepository;
+import com.forgebackend.repository.PlayerRepository;
 import com.forgebackend.security.ForgeApiKeyAuthenticationFilter;
 import com.forgebackend.security.ForgeApiKeyHasher;
 import com.forgebackend.steam.SteamClient;

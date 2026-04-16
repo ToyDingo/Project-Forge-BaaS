@@ -25,11 +25,12 @@ public class DevOnlySteamClientStub implements SteamClient {
 
     /** Minimum hex length to accept as a plausible ticket (arbitrary; real tickets are longer). */
     private static final int MIN_HEX_TICKET_LENGTH = 16;
+    /** SteamID64 universe base used to build deterministic mock identities from ticket input. */
+    private static final long STEAM_ID_64_BASE = 76561197960265728L;
+    /** Ticket hash modulus to keep generated IDs in a realistic range while varying per ticket. */
+    private static final long STEAM_ID_OFFSET_MOD = 900_000_000L;
 
     private static final Pattern HEX_ONLY = Pattern.compile("(?i)[0-9a-f]+");
-
-    /** Fixed SteamID64 returned on success (well-known test-style id). */
-    public static final String STUB_STEAM_ID_64 = "76561198000000000";
 
     @PostConstruct
     void logDevWarning() {
@@ -61,6 +62,8 @@ public class DevOnlySteamClientStub implements SteamClient {
             return new SteamTicketValidationResult.InvalidSteamTicket(
                     "DEV STUB: steam_ticket must be hexadecimal for mock success path");
         }
-        return new SteamTicketValidationResult.ValidSteamIdentity(STUB_STEAM_ID_64);
+        long offset = Math.floorMod(ticket.toLowerCase().hashCode(), STEAM_ID_OFFSET_MOD);
+        long generatedSteamId = STEAM_ID_64_BASE + offset;
+        return new SteamTicketValidationResult.ValidSteamIdentity(Long.toString(generatedSteamId));
     }
 }

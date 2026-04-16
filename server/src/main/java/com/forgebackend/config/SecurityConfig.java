@@ -31,6 +31,9 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/health", "/actuator/health").permitAll()
+                        // WebSocket handshake is public at the HTTP layer; the STOMP CONNECT
+                        // frame is authenticated by the JWT interceptor in WebSocketConfig.
+                        .requestMatchers("/ws/**", "/ws").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(forgeJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(forgeApiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

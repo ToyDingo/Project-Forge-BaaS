@@ -1,7 +1,7 @@
 package com.forgebackend.exception;
 
 /**
- * Business or infrastructure failure mapped to HTTP error responses by {@link com.forgebackend.api.GlobalExceptionHandler}.
+ * Business or infrastructure failure mapped to HTTP error responses by {@link com.forgebackend.exception.GlobalExceptionHandler}.
  */
 public class ForgeApiException extends RuntimeException {
 

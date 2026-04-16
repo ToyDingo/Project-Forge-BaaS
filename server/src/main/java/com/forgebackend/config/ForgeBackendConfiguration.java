@@ -9,15 +9,29 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Clock;
 import java.time.Duration;
 
 @Configuration
-@EnableConfigurationProperties({ForgeJwtProperties.class, ForgeSteamProperties.class})
+@EnableConfigurationProperties({
+        ForgeJwtProperties.class,
+        ForgeSteamProperties.class,
+        ForgeMatchmakingProperties.class
+})
 public class ForgeBackendConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Shared system clock bean used by services that need to compute timestamps.
+     * Providing a bean lets tests inject a fixed clock without touching production code.
+     */
+    @Bean
+    public Clock forgeClock() {
+        return Clock.systemUTC();
     }
 
     /**

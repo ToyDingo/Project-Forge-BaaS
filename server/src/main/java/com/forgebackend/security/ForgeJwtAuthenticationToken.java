@@ -1,5 +1,6 @@
 package com.forgebackend.security;
 
+import com.forgebackend.service.ForgeJwtService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 /**

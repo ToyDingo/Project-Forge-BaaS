@@ -21,6 +21,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -29,6 +30,10 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.postgresql:postgresql")
     implementation("com.nimbusds:nimbus-jose-jwt:9.37.3")
+
+    // Apache Camel: orchestrates matchmaker scans, queue eviction, and notification retries.
+    implementation("org.apache.camel.springboot:camel-spring-boot-starter:4.8.1")
+    implementation("org.apache.camel:camel-timer:4.8.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
@@ -41,4 +46,11 @@ tasks.withType<Test> {
 
 tasks.named<Jar>("jar") {
     enabled = false
+}
+
+tasks.register<JavaExec>("seedDevGame") {
+    group = "application"
+    description = "Insert a dev games row (hashed API key). Example: ./gradlew seedDevGame --args=\"my-raw-key\""
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.forgebackend.devtools.SeedDevGame")
 }

@@ -1,10 +1,10 @@
 package com.forgebackend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.forgebackend.api.ErrorResponse;
-import com.forgebackend.domain.game.Game;
-import com.forgebackend.domain.game.GameRepository;
+import com.forgebackend.dto.ErrorResponse;
+import com.forgebackend.entity.Game;
 import com.forgebackend.exception.ForgeErrorCode;
+import com.forgebackend.repository.GameRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

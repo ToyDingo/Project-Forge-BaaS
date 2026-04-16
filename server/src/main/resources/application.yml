@@ -41,3 +41,9 @@ forge:
     request-timeout-seconds: ${FORGE_STEAM_TIMEOUT_SECONDS:10}
     base-url: ${FORGE_STEAM_BASE_URL:https://api.steampowered.com}
     dev-stub-enabled: ${FORGE_STEAM_DEV_STUB_ENABLED:true}
+  matchmaking:
+    queue-timeout-seconds: ${FORGE_MATCHMAKING_QUEUE_TIMEOUT_SECONDS:60}
+    heartbeat-interval-seconds: ${FORGE_MATCHMAKING_HEARTBEAT_INTERVAL_SECONDS:10}
+    stale-heartbeat-threshold: ${FORGE_MATCHMAKING_STALE_HEARTBEAT_THRESHOLD:2}
+    notification-retry-count: ${FORGE_MATCHMAKING_NOTIFICATION_RETRY_COUNT:3}
+    notification-retry-interval-seconds: ${FORGE_MATCHMAKING_NOTIFICATION_RETRY_INTERVAL_SECONDS:5}
