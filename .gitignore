@@ -12,6 +12,8 @@ server/.gradle/
 .DS_Store
 Thumbs.db
 
-# Documentation: only README.md is tracked on the remote (per project policy)
+# Markdown: ignore by default so stray notes are not committed; allow root README and /documentation/
 *.md
 !README.md
+!documentation/
+!documentation/**/*.md
