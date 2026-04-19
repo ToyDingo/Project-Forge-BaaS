@@ -10,11 +10,11 @@ Completed backend layers:
 - Layer 3: Core Services (Auth, Leaderboard, Matchmaking)
 - Layer 2: API Gateway (Spring Security filter chain, JWT, STOMP/WebSocket)
 
-Next target:
+Shipped:
 
-- Layer 1: Client-facing SDK
+- Layer 1: Client-facing GDScript SDK (Godot addon at `client/godot/addons/forge_sdk/`)
 
-Discussion goal:
+Discussion goal (historical):
 
 - Define what the Forge SDK is and what it is not
 - Nail down architecture, API shape, and distribution before implementation
@@ -141,10 +141,10 @@ forge_sdk.matchmaking().match_found.connect(_on_match_found)
 - Breaking backend changes must be versioned at the API level to preserve SDK stability.
 - Versions of Godot where SDK functionality cannot be guaranteed are not listed as supported.
 
-### Documentation artifacts (deferred)
+### Documentation artifacts
 
-- Quickstart, API reference, error code guide, matchmaking integration recipe, and migration notes are all desired.
-- Documentation scope is **not blocking** the current design phase and will be planned separately.
+- **Quickstart:** shipped in [client/godot/addons/forge_sdk/README.md](../../client/godot/addons/forge_sdk/README.md).
+- API reference, error code guide, matchmaking integration recipe, and migration notes remain Phase 2 polish.
 
 ### Done criteria for Layer 1
 
@@ -174,4 +174,4 @@ Without ever touching STOMP, JWT plumbing, or raw HTTP wiring. Target setup time
 
 Section 4.1 of the v0.2.1 design document describes the intended GDScript SDK at a high level. This discussion document expands and refines those decisions with concrete choices for distribution format, API shape, config, auth lifecycle, transport abstraction, and developer ergonomics.
 
-The design document marks Layer 1 as Phase 2. This discussion formalizes the decisions needed to proceed with implementation when Phase 2 begins.
+The design document originally marked Layer 1 as Phase 2. Implementation is now complete; see [Layer1GdScriptSdk.md](../slices/Layer1GdScriptSdk.md) and [WhatWasImplemented.md](../foundations/WhatWasImplemented.md).

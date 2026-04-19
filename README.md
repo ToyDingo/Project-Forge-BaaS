@@ -6,10 +6,12 @@ This repository contains:
 
 - `db/` — hand-applied SQL migrations (also mirrored under `server/src/main/resources/db/migration` for Flyway).
 - `server/` — Spring Boot 3 application (Java 21 toolchain via Gradle; auto-provisioned if missing).
+- `client/godot/` — Godot 4.3 host project for the Forge GDScript SDK addon (`addons/forge_sdk/`), a headless test runner, and the manual cockpit harness.
 
 Code layout: see [CodeStructure.md](documentation/foundations/CodeStructure.md).
 Leaderboard implementation details: see [LeaderboardVerticalSlice.md](documentation/slices/LeaderboardVerticalSlice.md).
 Matchmaking implementation details: see [MatchmakingVerticalSlice.md](documentation/slices/MatchmakingVerticalSlice.md).
+GDScript SDK quickstart (Godot 4.3 addon): see [client/godot/addons/forge_sdk/README.md](client/godot/addons/forge_sdk/README.md).
 Summary of everything shipped so far: see [WhatWasImplemented.md](documentation/foundations/WhatWasImplemented.md).
 Current decision snapshot: see [FreezeNowDeferSafely.md](documentation/decisions/FreezeNowDeferSafely.md).
 Cloud deployment notes: see [CloudMigration.md](documentation/architecture/CloudMigration.md).
@@ -370,12 +372,25 @@ See [WebConfigurables.md](documentation/decisions/WebConfigurables.md) for the l
 
 ## Tests
 
+### Backend (Java)
+
 ```bash
 cd server
 ./gradlew.bat test
 ```
 
 Integration tests use an in-memory H2 database (`application-test.yml`) and mock the Steam client.
+
+### Godot SDK (GDScript)
+
+With [Godot 4.3](https://godotengine.org/) installed and on your `PATH`:
+
+```bash
+cd client/godot
+godot --headless --quit --script res://tests/run_all.gd
+```
+
+This runs the headless suite in `tests/run_all.gd` against stubbed HTTP and realtime layers. For manual end-to-end testing against a local backend, open `client/godot/project.godot` in the Godot editor and run the main scene (`test_harness/cockpit.tscn`), or use **Project -> Run** after setting `FORGE_STEAM_DEV_STUB_ENABLED=true` on the server per the Steam stub section above.
 
 ## License
 

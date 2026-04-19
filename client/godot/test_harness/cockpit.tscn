@@ -1,0 +1,113 @@
+[gd_scene load_steps=2 format=3 uid="uid://cockpitforgesdk00001"]
+
+[ext_resource type="Script" path="res://test_harness/cockpit.gd" id="1_script"]
+
+[node name="Cockpit" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+
+[node name="Title" type="Label" parent="Layout"]
+text = "Forge SDK Cockpit"
+
+[node name="Inputs" type="GridContainer" parent="Layout"]
+columns = 2
+
+[node name="SteamTicketLabel" type="Label" parent="Layout/Inputs"]
+text = "steam_ticket"
+
+[node name="SteamTicket" type="LineEdit" parent="Layout/Inputs"]
+placeholder_text = "deadbeefdeadbeef"
+
+[node name="ModeLabel" type="Label" parent="Layout/Inputs"]
+text = "mode"
+
+[node name="Mode" type="LineEdit" parent="Layout/Inputs"]
+text = "ranked_1v1"
+
+[node name="MatchIdLabel" type="Label" parent="Layout/Inputs"]
+text = "match_id"
+
+[node name="MatchId" type="LineEdit" parent="Layout/Inputs"]
+
+[node name="WinnerIdLabel" type="Label" parent="Layout/Inputs"]
+text = "winner_id"
+
+[node name="WinnerId" type="LineEdit" parent="Layout/Inputs"]
+
+[node name="LoserIdLabel" type="Label" parent="Layout/Inputs"]
+text = "loser_id"
+
+[node name="LoserId" type="LineEdit" parent="Layout/Inputs"]
+
+[node name="PlayerIdLabel" type="Label" parent="Layout/Inputs"]
+text = "player_id"
+
+[node name="PlayerId" type="LineEdit" parent="Layout/Inputs"]
+
+[node name="AuthRow" type="HBoxContainer" parent="Layout"]
+
+[node name="LoginButton" type="Button" parent="Layout/AuthRow"]
+text = "auth.login_steam"
+
+[node name="MeButton" type="Button" parent="Layout/AuthRow"]
+text = "auth.me"
+
+[node name="MatchmakingRow" type="HBoxContainer" parent="Layout"]
+
+[node name="ConnectRealtime" type="Button" parent="Layout/MatchmakingRow"]
+text = "connect_realtime"
+
+[node name="JoinQueue" type="Button" parent="Layout/MatchmakingRow"]
+text = "join_queue"
+
+[node name="Heartbeat" type="Button" parent="Layout/MatchmakingRow"]
+text = "heartbeat"
+
+[node name="Status" type="Button" parent="Layout/MatchmakingRow"]
+text = "status"
+
+[node name="LeaveQueue" type="Button" parent="Layout/MatchmakingRow"]
+text = "leave_queue"
+
+[node name="DisconnectRealtime" type="Button" parent="Layout/MatchmakingRow"]
+text = "disconnect_realtime"
+
+[node name="LeaderboardRow" type="HBoxContainer" parent="Layout"]
+
+[node name="ReportResult" type="Button" parent="Layout/LeaderboardRow"]
+text = "report_result"
+
+[node name="Top" type="Button" parent="Layout/LeaderboardRow"]
+text = "top"
+
+[node name="Rank" type="Button" parent="Layout/LeaderboardRow"]
+text = "rank"
+
+[node name="Log" type="TextEdit" parent="Layout"]
+custom_minimum_size = Vector2(0, 360)
+editable = false
+scroll_fit_content_height = true
+placeholder_text = "Output appears here."
+
+[connection signal="pressed" from="Layout/AuthRow/LoginButton" to="." method="_on_login_pressed"]
+[connection signal="pressed" from="Layout/AuthRow/MeButton" to="." method="_on_me_pressed"]
+[connection signal="pressed" from="Layout/MatchmakingRow/ConnectRealtime" to="." method="_on_connect_realtime_pressed"]
+[connection signal="pressed" from="Layout/MatchmakingRow/JoinQueue" to="." method="_on_join_queue_pressed"]
+[connection signal="pressed" from="Layout/MatchmakingRow/Heartbeat" to="." method="_on_heartbeat_pressed"]
+[connection signal="pressed" from="Layout/MatchmakingRow/Status" to="." method="_on_status_pressed"]
+[connection signal="pressed" from="Layout/MatchmakingRow/LeaveQueue" to="." method="_on_leave_queue_pressed"]
+[connection signal="pressed" from="Layout/MatchmakingRow/DisconnectRealtime" to="." method="_on_disconnect_realtime_pressed"]
+[connection signal="pressed" from="Layout/LeaderboardRow/ReportResult" to="." method="_on_report_result_pressed"]
+[connection signal="pressed" from="Layout/LeaderboardRow/Top" to="." method="_on_top_pressed"]
+[connection signal="pressed" from="Layout/LeaderboardRow/Rank" to="." method="_on_rank_pressed"]

@@ -1,0 +1,22 @@
+; Engine configuration file.
+;
+; Bare Godot 4.3 project that hosts the Forge SDK addon for editor work and
+; for the test harness. Game projects that consume the SDK do not need this
+; file; they only copy the addons/forge_sdk/ folder into their own project.
+
+config_version=5
+
+[application]
+
+config/name="Forge SDK Host"
+config/description="Hosts the Forge GDScript SDK addon for editor inspection, automated tests, and the manual cockpit test harness."
+config/features=PackedStringArray("4.3", "Forward Plus")
+run/main_scene="res://test_harness/cockpit.tscn"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/forge_sdk/plugin.cfg")
+
+[autoload]
+
+ForgeSDK="*res://addons/forge_sdk/forge_sdk.gd"

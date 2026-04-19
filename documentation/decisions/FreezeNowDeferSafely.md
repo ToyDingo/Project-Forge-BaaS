@@ -87,9 +87,20 @@ The matchmaking vertical slice is implemented under these freezes. Summary:
 
 See [WhatWasImplemented.md](../foundations/WhatWasImplemented.md) and [MatchmakingVerticalSlice.md](../slices/MatchmakingVerticalSlice.md) for full shipped behavior.
 
+## Implementation Status (Layer 1 GDScript SDK)
+
+The Godot 4.3 addon at `client/godot/addons/forge_sdk/` is implemented. It exposes `ForgeSDK` with chained `auth()`, `matchmaking()`, and `leaderboard()` services, reads `res://forge_config.json`, manages JWT in memory with transparent re-auth on `FORGE_INVALID_TOKEN`, and delivers `match_found` and `queue_timeout` via Godot signals with `match_id` deduplication.
+
+- Specification: [Layer1GdScriptSdk.md](../slices/Layer1GdScriptSdk.md)
+- Quickstart: [client/godot/addons/forge_sdk/README.md](../../client/godot/addons/forge_sdk/README.md)
+- Automated tests: `client/godot/tests/run_all.gd` (run with Godot headless; see [WhatWasImplemented.md](../foundations/WhatWasImplemented.md#layer-1-gdscript-sdk))
+- Manual cockpit: `client/godot/test_harness/cockpit.tscn`
+
+HTTP/WebSocket retry policy and STOMP auto-reconnect remain deferred per this file and the SDK design doc.
+
 ## Next Hurdle (Immediate Priority)
 
-With the matchmaking MVP implemented, the next highest-risk item is operational reliability under real client behavior.
+With the matchmaking MVP and the GDScript SDK implemented, the next highest-risk item is operational reliability under real client behavior (including a real Godot build against a running backend).
 
 Focus this next on:
 - End-to-end queue correctness during disconnect/reconnect paths.

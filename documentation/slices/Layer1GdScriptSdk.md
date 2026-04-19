@@ -4,9 +4,27 @@ This document defines the requirements, API contract, architecture, and acceptan
 
 ## Implementation Status
 
-**Not yet started.** This is a Phase 2 deliverable. Backend layers 2, 3, and 4 must be locally validated before Layer 1 implementation begins.
+**Implemented.** The SDK ships as a Godot 4.3 addon at `client/godot/addons/forge_sdk/`. Every section below maps to live code; the public API surface in section 7 is locked under Commandment 7.
 
-See [Layer1SdkDesignDiscussion.md](../discussions/Layer1SdkDesignDiscussion.md) for the full design discussion that produced this document.
+What is in place today:
+
+- Addon scaffolding (`plugin.cfg`, `plugin.gd`, autoload `ForgeSDK`).
+- `forge_config.json` loader with readable `FORGE_SDK_NOT_CONFIGURED` errors when the file is missing or incomplete; example template at `client/godot/forge_config.example.json`.
+- `ForgeAuth.login_steam` and `ForgeAuth.me` with automatic JWT attach, in-memory token storage, and transparent re-auth on `FORGE_INVALID_TOKEN`.
+- `ForgeMatchmaking.join_queue`, `leave_queue`, `status`, and `heartbeat`. Heartbeat scheduling is left to the developer per section 7.3.
+- `ForgeMatchmaking` realtime channel (`connect_realtime`, `disconnect_realtime`) with `match_found` and `queue_timeout` Godot signals. `match_found` is deduped internally by `match_id`.
+- `ForgeLeaderboard.report_result`, `top`, and `rank` with full `LEADERBOARD_*` error mapping through `ForgeResult`.
+- Backend `ForgeErrorCode` names mirrored verbatim in `addons/forge_sdk/internal/forge_errors.gd` so game code can branch on the same constants the server emits.
+- Headless test runner at `client/godot/tests/run_all.gd` covering every US-L1-SDK acceptance criterion plus a public-surface scan that fails if any transport term leaks into `services/*.gd`.
+- Manual cockpit at `client/godot/test_harness/cockpit.tscn` with one button per public call.
+
+What stayed deferred for this release (per section 13 and `decisions/FreezeNowDeferSafely.md`):
+
+- HTTP and WebSocket retry/backoff policy; the SDK ships with simple, documented behavior only.
+- STOMP auto-reconnect; developers call `connect_realtime()` again and use `await ForgeSDK.matchmaking().status()` to resync.
+- Disk persistence of the JWT (in-memory only).
+
+See [Layer1SdkDesignDiscussion.md](../discussions/Layer1SdkDesignDiscussion.md) for the full design discussion that produced this document. See [`WhatWasImplemented.md`](../foundations/WhatWasImplemented.md#layer-1-gdscript-sdk) for the cross-cutting summary.
 
 ---
 

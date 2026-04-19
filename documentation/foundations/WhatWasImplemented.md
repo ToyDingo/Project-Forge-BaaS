@@ -5,6 +5,7 @@ This document summarizes what was added to the **GameBackend** repository for th
 1. **Auth vertical slice** (Steam ticket exchange + Forge JWT)
 2. **Leaderboard vertical slice** (dual-client report reconciliation + dense ranking)
 3. **Matchmaking vertical slice** (queue + 1v1 match formation + WebSocket notifications)
+4. **Layer 1 GDScript SDK** (Godot 4.3 addon that consumes the backend without exposing transport)
 
 It complements [README.md](../../README.md), [CodeStructure.md](CodeStructure.md), and [CloudMigration.md](../architecture/CloudMigration.md).
 
@@ -119,6 +120,78 @@ Tunables live in `forge.matchmaking.*` and are tracked in [WebConfigurables.md](
 
 ---
 
+## Layer 1 GDScript SDK
+
+### Distribution
+
+- Godot **4.3** addon at `client/godot/addons/forge_sdk/`.
+- `client/godot/` is a thin host project that exists so the addon can be opened in the Godot editor and so the manual cockpit harness has a place to live. Game projects only need to copy `addons/forge_sdk/` into their own `addons/` folder.
+- The addon registers a global `ForgeSDK` autoload via `plugin.gd`. Developers who prefer to instantiate the SDK manually can disable the autoload after enabling the plugin.
+
+### Public surface (locked for v1; see Commandment 7)
+
+```
+ForgeSDK
+  .auth() -> ForgeAuth
+    await login_steam(steam_ticket: String) -> ForgeResult
+    await me() -> ForgeResult
+  .matchmaking() -> ForgeMatchmaking
+    connect_realtime() -> void
+    disconnect_realtime() -> void
+    signal match_found(event: Dictionary)
+    signal queue_timeout(event: Dictionary)
+    await join_queue(attrs: Dictionary) -> ForgeResult
+    await leave_queue() -> ForgeResult
+    await status() -> ForgeResult
+    await heartbeat() -> ForgeResult
+  .leaderboard() -> ForgeLeaderboard
+    await report_result(match_id, winner_id, loser_id) -> ForgeResult
+    await top(page, size) -> ForgeResult
+    await rank(player_id) -> ForgeResult
+```
+
+`ForgeResult` carries `ok`, `data`, `error_code`, and `error_message`. Backend `ForgeErrorCode` names (`MATCHMAKING_ALREADY_QUEUED`, `LEADERBOARD_DUPLICATE_REPORT`, `FORGE_INVALID_TOKEN`, etc.) are mirrored verbatim as constants in `addons/forge_sdk/internal/forge_errors.gd` so game code can branch on the same names the server emits.
+
+### Configuration
+
+- `res://forge_config.json` is the single configuration artifact. A template lives at `client/godot/forge_config.example.json`.
+- Required fields: `forge_base_url`, `forge_api_key`. Optional: `log_level`, `auth.*`.
+- Tests and the cockpit can override config in-process via `ForgeSDK.init_with_config({...})` without needing a real file on disk.
+
+### Internal architecture
+
+- `internal/forge_config.gd` parses `forge_config.json` and reports a readable `FORGE_SDK_NOT_CONFIGURED` failure if anything is missing.
+- `internal/forge_jwt_store.gd` keeps the access token in memory, tracks expiry, and remembers the last good Steam ticket so the HTTP client can re-authenticate transparently.
+- `internal/forge_http_client.gd` wraps `HTTPRequest` behind `await`-friendly `get_json` / `post_json` calls, attaches `Authorization: Bearer <jwt>` automatically, attaches `X-Forge-Api-Key` only on `POST /v1/auth/steam`, decodes Forge `ErrorResponse` envelopes, and retries once after a transparent re-auth on `FORGE_INVALID_TOKEN`.
+- `internal/forge_stomp_client.gd` runs the STOMP-over-WebSocket session on Godot's `WebSocketPeer`, sends the authenticated `CONNECT` frame, subscribes to the per-user matchmaking destinations, and hands JSON payloads to `ForgeMatchmaking` via the `frame_received` signal.
+- `internal/forge_logger.gd` provides leveled structured logging routed through Godot's `print` / `push_warning` / `push_error`.
+- `internal/forge_errors.gd` and `internal/forge_result.gd` define the shared error-code constants and the `ForgeResult` envelope.
+
+### Realtime channel
+
+- `connect_realtime()` opens the channel after `login_steam()` succeeds. The transport, JWT attach, and STOMP framing are entirely internal.
+- `match_found` events are deduped internally by `match_id` so the public Godot signal fires exactly once per match even with at-least-once delivery.
+- Auto-reconnect is intentionally deferred (matches FreezeNowDeferSafely.md and Layer1GdScriptSdk.md section 13). Disconnects emit a single `disconnected` internal signal; developers call `connect_realtime()` again and use `GET /v1/matchmaking/status` to resync.
+
+### Validation performed
+
+Automated test runner at `client/godot/tests/run_all.gd` covers every US-L1-SDK acceptance criterion:
+
+1. Missing or malformed `forge_config.json` produces a readable `FORGE_SDK_NOT_CONFIGURED` failure (US-L1-SDK-01).
+2. `login_steam` happy path stores the JWT and remembers the Steam ticket (US-L1-SDK-02).
+3. Calling a protected method before `login_steam` returns `FORGE_SDK_AUTH_REQUIRED` (US-L1-SDK-02).
+4. A `401 FORGE_INVALID_TOKEN` triggers transparent re-auth and a successful retry without surfacing the failure (US-L1-SDK-02).
+5. `join_queue` happy path returns the queue ticket payload (US-L1-SDK-03).
+6. Duplicate `match_found` events with the same `match_id` fire the Godot signal exactly once (US-L1-SDK-03 and Done Criterion 7).
+7. `queue_timeout` event payload is delivered through the Godot signal (US-L1-SDK-03).
+8. `heartbeat` returns a clean status both when queued and when not queued (US-L1-SDK-04).
+9. `report_result`, `top`, and `rank` happy paths plus mapped error codes (US-L1-SDK-05, US-L1-SDK-06).
+10. Source scan of `addons/forge_sdk/services/*.gd` confirms no `Bearer`, `X-Forge-Api-Key`, `STOMP`, or `WebSocket` strings leak into the public surface (US-L1-SDK-07).
+
+A manual cockpit scene at `client/godot/test_harness/cockpit.tscn` exposes every public call as a button so a developer can drive the full happy path against a locally running backend (`server/` with `FORGE_STEAM_DEV_STUB_ENABLED=true`).
+
+---
+
 ## Database migrations
 
 ### Root SQL (`db/`)
@@ -182,4 +255,4 @@ This allows local multi-player leaderboard testing without Steam API calls.
 
 ---
 
-*Last updated to match the auth, leaderboard, and matchmaking vertical slice implementation in this repository.*
+*Last updated to match the auth, leaderboard, matchmaking vertical slices, and Layer 1 GDScript SDK in this repository.*

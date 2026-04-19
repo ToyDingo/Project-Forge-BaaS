@@ -1,0 +1,10 @@
+{
+  "forge_base_url": "http://localhost:8080",
+  "forge_api_key": "REPLACE_WITH_YOUR_RAW_FORGE_API_KEY",
+  "log_level": "info",
+  "auth": {
+    "auto_refresh_on_expiry": true,
+    "proactive_refresh_before_expiry": true,
+    "log_token_events": true
+  }
+}
