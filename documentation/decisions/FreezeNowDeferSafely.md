@@ -7,7 +7,7 @@ This document captures what we are freezing now versus what we are intentionally
 
 - Local MVP first
 - Cloud target is GCP
-- Matchmaking is the final MVP vertical slice in progress
+- All MVP vertical slices (auth, leaderboard, matchmaking, GDScript SDK) are implemented and locally validated
 - Significant post-MVP refinement is expected and planned
 
 ## Freeze Now (Implementation Decisions)
@@ -75,6 +75,13 @@ This document captures what we are freezing now versus what we are intentionally
 
 **MVP posture:** single-region GCP-first.
 
+### E) Game API Key Provisioning via Web UI
+- Add a secured backend endpoint in Phase 2 to create/register Forge API keys in the `games` table.
+- Design it so the eventual Web UI can call this endpoint directly for game onboarding and key rotation workflows.
+- Reuse the same hashing/provisioning logic used by dev seeding (`SeedDevGame` path) so stored `api_key_lookup_hash` and `api_key_hash` remain consistent with auth validation.
+
+**MVP posture:** API key provisioning remains out-of-band (`seedDevGame` / direct DB seeding).
+
 ## Implementation Status (MVP Matchmaking)
 
 The matchmaking vertical slice is implemented under these freezes. Summary:
@@ -98,30 +105,29 @@ The Godot 4.3 addon at `client/godot/addons/forge_sdk/` is implemented. It expos
 
 HTTP/WebSocket retry policy and STOMP auto-reconnect remain deferred per this file and the SDK design doc.
 
-## Next Hurdle (Immediate Priority)
+## Local Validation Status
 
-With the matchmaking MVP and the GDScript SDK implemented, the next highest-risk item is operational reliability under real client behavior (including a real Godot build against a running backend).
+Local end-to-end validation against the running backend with the Godot test harness completed on 2026-04-28. All planned local phases passed with no Blocker or High severity defects.
 
-Focus this next on:
-- End-to-end queue correctness during disconnect/reconnect paths.
-- WebSocket transport edge cases, including missed `match_found` events and retry exhaustion behavior.
-- State integrity under concurrent joins, leaves, and heartbeats.
-- Baseline observability for queue depth, timeout rate, stale removals, and delivery retries/failures.
+Phases passed:
+- Phase 0: Baseline login and `me` checks.
+- Phase 1: Auth, matchmaking, and leaderboard functional checks.
+- Phase 2: Two-client matchmaking symmetry and shared `match_id` verification.
+- Phase 3: Multi-client queue and match distribution checks.
+- Phase 4: Resilience and recovery scenarios.
 
-Exit criteria for this hurdle:
-- Client reconnection and status recovery flow is validated with deterministic test scenarios.
-- No duplicate or orphaned queue/match state after concurrent operations.
-- Match delivery semantics are validated with at-least-once dedupe by `match_id`.
-- Operational metrics and logs are sufficient to debug live queue incidents quickly.
+Evidence and full test plan: [FORGE_LOCAL_VALIDATION_GUIDE.md](../local-testing/FORGE_LOCAL_VALIDATION_GUIDE.md).
 
-## Immediate Build Guidance
+Next focus is cloud handoff readiness, not additional local hardening.
 
-Proceed with matchmaking implementation using:
+## Ongoing Build Guidance
+
+Continue post-MVP and cloud-handoff work using:
 - GCP-first assumptions
 - Pub/Sub-compatible async design
 - Camel-based orchestration where retries/timers/events are needed
 - Current MVP defaults from design docs
-- Deferred items tracked here, not solved inline during slice build
+- Deferred items tracked here, not solved inline during slice work
 
 ## Revisit Trigger Points
 

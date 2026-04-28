@@ -253,6 +253,23 @@ This allows local multi-player leaderboard testing without Steam API calls.
   8. Notification delivery failure surfaces as `EventDeliveryException` so the Camel retry policy engages (3 retries at 5s intervals per `ForgeMatchmakingProperties`).
   9. Retry exhaustion cancels the match and returns both participants to `queued`.
 
+### Local end-to-end validation (2026-04-28)
+
+Local validation with the Godot test harness against a running backend completed successfully. All planned phases passed:
+
+- Phase 0: Baseline login and `me` checks.
+- Phase 1: Single-client auth, matchmaking, and leaderboard checks.
+- Phase 2: Two-client matchmaking symmetry and shared `match_id` verification.
+- Phase 3: Multi-client queue and match distribution checks.
+- Phase 4: Resilience and recovery scenarios.
+
+No Blocker or High severity defects were observed. Full guide and evidence template: [FORGE_LOCAL_VALIDATION_GUIDE.md](../local-testing/FORGE_LOCAL_VALIDATION_GUIDE.md).
+
+Two Godot 4.6 compatibility notes were captured during validation and applied to the SDK:
+
+- [GODOT_FORGE_SDK_TYPE_INFERENCE.md](../local-testing/GODOT_FORGE_SDK_TYPE_INFERENCE.md)
+- [GODOT_46_STOMP_NULL_PARSER_COMPAT.md](../local-testing/GODOT_46_STOMP_NULL_PARSER_COMPAT.md)
+
 ---
 
-*Last updated to match the auth, leaderboard, matchmaking vertical slices, and Layer 1 GDScript SDK in this repository.*
+*Last updated to match the auth, leaderboard, matchmaking vertical slices, the Layer 1 GDScript SDK, and the completed local validation pass in this repository.*

@@ -15,6 +15,7 @@ GDScript SDK quickstart (Godot 4.3 addon): see [client/godot/addons/forge_sdk/RE
 Summary of everything shipped so far: see [WhatWasImplemented.md](documentation/foundations/WhatWasImplemented.md).
 Current decision snapshot: see [FreezeNowDeferSafely.md](documentation/decisions/FreezeNowDeferSafely.md).
 Cloud deployment notes: see [CloudMigration.md](documentation/architecture/CloudMigration.md).
+Local end-to-end validation guide: see [FORGE_LOCAL_VALIDATION_GUIDE.md](documentation/local-testing/FORGE_LOCAL_VALIDATION_GUIDE.md). Local validation completed and passed on 2026-04-28; cloud handoff is the next phase.
 
 ## Prerequisites
 
